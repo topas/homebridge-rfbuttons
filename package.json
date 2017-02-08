@@ -1,0 +1,21 @@
+{
+  "name": "homebridge-rfcontact",
+  "version": "1.0.0",
+  "description": "Homekit Contact sensor controlled by RF433 (RF315) receiver connected to Raspberry PI's GPIO",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tomas Pastorek",
+  "license": "ISC",
+  "dependencies": {
+    "rpi-433": "^2.1.0"
+  },
+  "keywords": [
+    "homebridge-plugin"
+  ],
+  "engines": {
+    "node": ">=0.12.0",
+    "homebridge": ">=0.2.0"
+  }
+}
