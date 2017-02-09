@@ -2,39 +2,71 @@ var Service, Characteristic;
 var rpi433 = require('rpi-433');
 
 module.exports = function(homebridge) {
-  Service = homebridge.hap.Service;
-  Characteristic = homebridge.hap.Characteristic;
-  homebridge.registerAccessory("homebridge-rfbutton", "RFButton", RFButtonAccessory);
+    Service = homebridge.hap.Service;
+    Characteristic = homebridge.hap.Characteristic;
+    homebridge.registerPlatform("homebridge-rcbuttons", "RCButtons", RCButtonsPlatform);
 }
 
-function RFButtonAccessory(log, config) {
-  this.log = log;
-  this.name = config["name"];
-  this.buttonName = config["button_name"] || this.name; // fallback to "name" if you didn't specify an exact "button_name"
-  this.state = 0; // default state is OFF
-  this.pin = config["pin"] || 2; // Listen on GPIO 2 (or Physical PIN 13)
-  this.delay = config["delay"] || 500; // Wait 500 ms before reading another code
+function RCButtonsPlatform(log, config) {
+    var self = this;
+    self.config = config;
+    self.log = log;
+    self.pin = config["pin"] || 2; // Listen on GPIO 2 (or Physical PIN 13)
+    self.delay = config["delay"] || 500; // Wait 500 ms before reading another code
 
-  this.service = new Service.ContactSensor();
+    self.rfSniffer = rpi433.sniffer({
+            pin: self.pin,                     
+            debounceDelay: self.delay          
+        });
+}
+
+RCButtonsPlatform.prototype.accessories = function(callback) {
+    var self = this;
+    self.accessories = [];
+    self.config.buttons.forEach(function(sw) {
+        self.accessories.push(new RCButtonAccessory(sw, self.log, self.config));
+    });
+
+    self.rfSniffer.on('data', function (data) {
+        self.log('Code received: '+ data.code +' pulse length : ' + data.pulseLength);
+        if(self.accessories) {
+            self.accessories.forEach(function(accessory) {
+                accessory.notify.call(accessory, data.code);
+            });
+        }
+    });
+
+    callback(self.accessories);
+}
+
+function RCButtonAccessory(sw, log, config) {
+    var self = this;
+    self.name = sw.name;
+    self.sw = sw;
+    self.log = log;
+    self.config = config;
+    self.currentState = false;
+
+    self.service = new Service.Switch(self.name);
+
+    self.service.getCharacteristic(Characteristic.On).value = self.currentState;
     
-  this.log("RF button '" + this.buttonName + "' init...");
-
-  var rfSniffer = rpi433.sniffer({
-      pin: this.pin,                     
-      debounceDelay: this.delay          
-   });
-
-  var self = this;
-
-  rfSniffer.on('data', function (data) {
-    console.log('Code received: '+ data.code +' pulse length : ' + data.pulseLength);
-    self.state = self.state == 1 ? 0 : 1;
-    self.service.getCharacteristic(Characteristic.ContactSensorState).setValue(self.state == 1 ?
-				Characteristic.ContactSensorState.CONTACT_DETECTED : Characteristic.ContactSensorState.CONTACT_NOT_DETECTED);
-  });
-
+    self.service.getCharacteristic(Characteristic.On).on('get', function(cb) {
+        cb(null, self.currentState);
+    }.bind(self));
 }
 
-RFButtonAccessory.prototype.getServices = function() {  
+RCButtonAccessory.prototype.notify = function(code) {
+    var self = this;
+    if(this.sw.on.code === code) {
+        self.log("%s is turned on", self.sw.name);
+        self.service.getCharacteristic(Characteristic.On).setValue(true);
+    } else if (this.sw.off.code === code) {
+        self.log("%s is turned off", self.sw.name);
+        self.service.getCharacteristic(Characteristic.On).setValue(false);
+    }
+}
+
+RCButtonAccessory.prototype.getServices = function() {
     return [this.service];
 }
