@@ -29,3 +29,4 @@ root@raspberrypi:/home/pi/wiringPi/wiringPi# ./build
 
 - [rpi-433 npm package](https://www.npmjs.com/package/rpi-433)
 - [wiringPi library](https://projects.drogon.net/raspberry-pi/wiringpi/)
+- [Based on: homebridge-platform-rcswitch](https://github.com/rainlake/homebridge-platform-rcswitch)
