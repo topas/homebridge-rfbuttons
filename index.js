@@ -4,15 +4,15 @@ var rpi433 = require('rpi-433');
 module.exports = function(homebridge) {
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
-    homebridge.registerPlatform("homebridge-rcbuttons", "RCButtons", RCButtonsPlatform);
-}
+    homebridge.registerPlatform("homebridge-rfbuttons", "RFButtons", RFButtonsPlatform);
+};
 
-function RCButtonsPlatform(log, config) {
+function RFButtonsPlatform(log, config) {
     var self = this;
     self.config = config;
     self.log = log;
     self.pin = config["pin"] || 2; // Listen on GPIO 2 (or Physical PIN 13)
-    self.delay = config["delay"] || 500; // Wait 500 ms before reading another code
+    self.delay = config["debounceDelay"] || 300; // Debounce delay
 
     self.rfSniffer = rpi433.sniffer({
             pin: self.pin,                     
@@ -20,11 +20,11 @@ function RCButtonsPlatform(log, config) {
         });
 }
 
-RCButtonsPlatform.prototype.accessories = function(callback) {
+RFButtonsPlatform.prototype.accessories = function(callback) {
     var self = this;
     self.accessories = [];
-    self.config.buttons.forEach(function(sw) {
-        self.accessories.push(new RCButtonAccessory(sw, self.log, self.config));
+    self.config.buttons.forEach(function(button) {
+        self.accessories.push(new RFButtonAccessory(button, self.log, self.config));
     });
 
     self.rfSniffer.on('data', function (data) {
@@ -37,36 +37,31 @@ RCButtonsPlatform.prototype.accessories = function(callback) {
     });
 
     callback(self.accessories);
-}
+};
 
-function RCButtonAccessory(sw, log, config) {
+function RFButtonAccessory(button, log, config) {
     var self = this;
-    self.name = sw.name;
-    self.sw = sw;
+    self.name = button.name;
+    self.button = button;
     self.log = log;
     self.config = config;
-    self.currentState = false;
 
-    self.service = new Service.Switch(self.name);
-
-    self.service.getCharacteristic(Characteristic.On).value = self.currentState;
-    
-    self.service.getCharacteristic(Characteristic.On).on('get', function(cb) {
-        cb(null, self.currentState);
-    }.bind(self));
+    self.service = new Service.StatelessProgrammableSwitch(self.name);
 }
 
-RCButtonAccessory.prototype.notify = function(code) {
+RFButtonAccessory.prototype.pressed = function() {
     var self = this;
-    if(this.sw.on.code === code) {
-        self.log("%s is turned on", self.sw.name);
-        self.service.getCharacteristic(Characteristic.On).setValue(true);
-    } else if (this.sw.off.code === code) {
-        self.log("%s is turned off", self.sw.name);
-        self.service.getCharacteristic(Characteristic.On).setValue(false);
-    }
-}
+    self.log("%s pressed", self.button.name);
+    self.service.getCharacteristic(Characteristic.ProgrammableSwitchEvent).setValue(0 /* BUTTON PRESSED EVENT */);
+};
 
-RCButtonAccessory.prototype.getServices = function() {
+RFButtonAccessory.prototype.notify = function(code) {
+    var self = this;
+    if(self.button.codes.indexOf(code) !== -1) {
+        self.pressed();
+    }
+};
+
+RFButtonAccessory.prototype.getServices = function() {
     return [this.service];
-}
+};
