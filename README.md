@@ -25,7 +25,7 @@ pi@raspberrypi ~/wiringPi/wiringPi $ sudo su
 root@raspberrypi:/home/pi/wiringPi/wiringPi# ./build
 ```
 
-## Homebridge Configuration 
+## Homebridge Configuration 
 
 ```json
 {
