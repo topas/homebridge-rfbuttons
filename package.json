@@ -1,12 +1,16 @@
 {
   "name": "homebridge-rfbuttons",
+  "author": "Tomas Pastorek",
   "version": "1.0.0",
-  "description": "Homekit Programmable switches controlled by RF433 (RF315) receiver connected to Raspberry PI's GPIO",
+  "description": "Homekit Programmable buttons controlled by RF433 (RF315) receiver connected to Raspberry PI's GPIO",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Tomas Pastorek",
+  "repository": { 
+    "type" : "git", 
+    "url" : "https://github.com/topas/homebridge-rfbuttons.git"
+  },
   "license": "ISC",
   "dependencies": {
     "rpi-433": "https://github.com/topas/rpi-433"
