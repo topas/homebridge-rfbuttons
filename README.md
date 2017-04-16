@@ -8,7 +8,7 @@ Every button can be triggered by multiple RF codes. It can be useful for joining
 
 ## Wiring 
 
-It very simple: RF433 / RF315 receiver has 3 wires: +5V, GND and data output. Data output should go to GPIO2 ([pin number 27 on Raspberry PI 2 and 3](https://projects.drogon.net/raspberry-pi/wiringpi/pins/)) or just follow this [tutorial how to connect RF receiver to Raspberry PI](http://www.princetronics.com/how-to-read-433-mhz-codes-w-raspberry-pi-433-mhz-receiver/).
+It's very simple: RF433 / RF315 receiver has 3 wires: +5V, GND and data output. Data output should go to GPIO2 ([pin number 27 on Raspberry PI 2 and 3](https://projects.drogon.net/raspberry-pi/wiringpi/pins/)) or just follow this [tutorial how to connect RF receiver to Raspberry PI](http://www.princetronics.com/how-to-read-433-mhz-codes-w-raspberry-pi-433-mhz-receiver/).
 
 ## How to install 
 
