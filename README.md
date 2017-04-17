@@ -6,9 +6,18 @@ RF buttons will appear as stateless programmable buttons in Homekit (supported s
 
 Every button can be triggered by multiple RF codes. It can be useful for joining multiple RF buttons to one Homekit button.
 
-## Wiring 
+## Raspberry PI Wiring 
 
 It's very simple: RF433 / RF315 receiver has 3 wires: +5V, GND and data output. Data output should go to GPIO2 ([pin number 27 on Raspberry PI 2 and 3](https://projects.drogon.net/raspberry-pi/wiringpi/pins/)) or just follow this [tutorial how to connect RF receiver to Raspberry PI](http://www.princetronics.com/how-to-read-433-mhz-codes-w-raspberry-pi-433-mhz-receiver/).
+
+## Wall Buttons (switches) tips
+
+Cheap from Aliexpress: 
+ - [86 Wall Panel Remote Transmitter with 1, 2 or 3 Buttons](https://www.aliexpress.com/item/86-Wall-Panel-Remote-Transmitter-1-2-3-Button-Sticky-RF-TX-Smart-Home-Room-Living/32676914264.html?spm=2114.13010608.0.0.hg1sfc)
+ // The seller offers a lof of 433 Mhz remote controls, not just wall buttons
+
+ - [VHome seller](https://www.aliexpress.com/store/group/Switch-shape-remote-control/1112973_510025631/1.html?spm=2114.12010612.0.0.ZfO0nC&SortType=bestmatch_sort&g=y)
+ // Better design, only "touch" version
 
 ## How to install 
 
