@@ -18,14 +18,6 @@ function RFButtonsPlatform(log, config) {
             pin: self.pin,                     
             debounceDelay: self.delay          
         });
-}
-
-RFButtonsPlatform.prototype.accessories = function(callback) {
-    var self = this;
-    self.accessories = [];
-    self.config.buttons.forEach(function(button) {
-        self.accessories.push(new RFButtonAccessory(button, self.log, self.config));
-    });
 
     self.rfSniffer.on('data', function (data) {
         self.log('Code received: '+ data.code +' pulse length : ' + data.pulseLength);
@@ -34,6 +26,14 @@ RFButtonsPlatform.prototype.accessories = function(callback) {
                 accessory.notify.call(accessory, data.code);
             });
         }
+    });
+}
+
+RFButtonsPlatform.prototype.accessories = function(callback) {
+    var self = this;
+    self.accessories = [];
+    self.config.buttons.forEach(function(button) {
+        self.accessories.push(new RFButtonAccessory(button, self.log, self.config));
     });
 
     callback(self.accessories);
@@ -47,6 +47,7 @@ function RFButtonAccessory(button, log, config) {
     self.config = config;
 
     self.service = new Service.StatelessProgrammableSwitch(self.name);
+    self.service.getCharacteristic(Characteristic.ProgrammableSwitchEvent).setProps({maxValue: 0}); // Single tap only
 }
 
 RFButtonAccessory.prototype.pressed = function() {
