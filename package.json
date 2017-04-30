@@ -1,7 +1,7 @@
 {
   "name": "homebridge-rfbuttons",
   "author": "Tomas Pastorek",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Homekit Programmable buttons controlled by RF433 (RF315) receiver connected to Raspberry PI's GPIO",
   "main": "index.js",
   "scripts": {
